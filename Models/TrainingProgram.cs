@@ -11,7 +11,7 @@ namespace BangazonWorkforce.Models
         public string Name { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public int MaxAtendees { get; set; }
+        public int MaxAttendees { get; set; }
 
     }
 }
