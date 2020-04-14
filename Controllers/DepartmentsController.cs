@@ -67,34 +67,8 @@ namespace BangazonWorkforce.Controllers
         // GET: Departments/Details/5
         public ActionResult Details(int id)
         {
-            {
-                using (SqlConnection conn = Connection)
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = "SELECT Id, Name, Budget FROM Department WHERE Id = @id";
-
-                        cmd.Parameters.Add(new SqlParameter("@id", id));
-
-                        var reader = cmd.ExecuteReader();
-                        Department department = null;
-
-                        if (reader.Read())
-                        {
-                            department = new Department()
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                Name = reader.GetString(reader.GetOrdinal("Name")),
-                                Budget = reader.GetInt32(reader.GetOrdinal("Budget"))                               
-                            };
-
-                        }
-                        reader.Close();
-                        return View(department);
-                    }
-                }
-            }
+            var department = GetDepartmentById(id);
+            return View(department);
         }
 
         // GET: Departments/Create
