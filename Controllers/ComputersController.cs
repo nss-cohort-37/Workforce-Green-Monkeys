@@ -308,7 +308,6 @@ namespace BangazonWorkforce.Controllers
                     Computer computer = null;
 
 
-
                     if (reader.Read())
 
                     {
@@ -321,14 +320,16 @@ namespace BangazonWorkforce.Controllers
 
                             PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
 
-                            DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate")),
-
-                            Make = reader.GetString(reader.GetOrdinal("SlackHandle")),
+                            Make = reader.GetString(reader.GetOrdinal("Make")),
 
                             Model = reader.GetString(reader.GetOrdinal("Model"))
 
                         };
 
+                                                if(!reader.IsDBNull(reader.GetOrdinal("DecomissionDate")))
+                            {
+                            computer.DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate"));
+                         }
 
 
                     }
