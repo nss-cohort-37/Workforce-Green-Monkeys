@@ -175,40 +175,40 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-        //        // GET: TrainingPrograms/Delete/5
-        //        public ActionResult Delete(int id)
-        //        {
-        //            var instructor = GetInstructorById(id);
-        //            return View(instructor);
-        //        }
+        // GET: TrainingPrograms/Delete/5
+        public ActionResult Delete(int id)
+        {
+            var trainingProgram = GetTrainingProgramById(id);
+            return View(trainingProgram);
+        }
 
-        //        // POST: Instructors/Delete/5
-        //        [HttpPost]
-        //        [ValidateAntiForgeryToken]
-        //        public ActionResult Delete(int id, Instructor instructor)
-        //        {
-        //            try
-        //            {
-        //                using (SqlConnection conn = Connection)
-        //                {
-        //                    conn.Open();
-        //                    using (SqlCommand cmd = conn.CreateCommand())
-        //                    {
-        //                        cmd.CommandText = "DELETE FROM Instructor WHERE Id = @id";
-        //                        cmd.Parameters.Add(new SqlParameter("@id", id));
+        // POST: TrainingPrograms/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, TrainingProgram trainingProgram)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "DELETE FROM TrainingProgram WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
 
-        //                        cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery();
 
-        //                    }
-        //                }
+                    }
+                }
 
-        //                return RedirectToAction(nameof(Index));
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                return View();
-        //            }
-        //        }
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+        }
 
 
         private TrainingProgram GetTrainingProgramById(int id)
