@@ -20,5 +20,8 @@ namespace BangazonWorkforce.Models
         public int ComputerId { get; set; }
 
         public Computer Computer { get; set; }
+
+        public string Name { get; set; }
+
     }
 }
