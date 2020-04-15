@@ -53,6 +53,11 @@
         </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+    @*this if statment checks to see if the event is in the future. 
+      if it is, the user is given the option to edit the details*@
+    @if (Model.StartDate > DateTime.Now)
+    {
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ })
+    }
+    |<a asp-action="Index">Back to List</a>
 </div>

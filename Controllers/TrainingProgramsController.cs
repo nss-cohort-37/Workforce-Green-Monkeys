@@ -123,70 +123,59 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-        //        // GET: Instructors/Edit/5
-        //        public ActionResult Edit(int id)
-        //        {
-        //            var instructor = GetInstructorById(id);
-        //            var cohortOptions = GetCohortOptions();
-        //            var viewModel = new InstructorEditViewModel()
-        //            {
-        //                InstructorId = instructor.Id,
-        //                FirstName = instructor.FirstName,
-        //                LastName = instructor.LastName,
-        //                CohortId = instructor.CohortId,
-        //                SlackHandle = instructor.SlackHandle,
-        //                Specialty = instructor.Specialty,
-        //                CohortOptions = cohortOptions
-        //            };
-        //            return View(viewModel);
-        //        }
+        // GET: TrainingPrograms/Edit/5
+        public ActionResult Edit()
+        {
+         
+            return View();
+        }
 
-        //        // POST: Instructors/Edit/5
-        //        [HttpPost]
-        //        [ValidateAntiForgeryToken]
-        //        public ActionResult Edit(int id, Instructor instructor)
-        //        {
-        //            try
-        //            {
-        //                using (SqlConnection conn = Connection)
-        //                {
-        //                    conn.Open();
-        //                    using (SqlCommand cmd = conn.CreateCommand())
-        //                    {
-        //                        cmd.CommandText = @" UPDATE Instructor
-        //                                           SET FirstName = @FirstName, 
-        //                                           LastName = @LastName,
-        //                                           SlackHandle = @SlackHandle,
-        //                                           CohortId = @CohortId,
-        //                                           Specialty = @Specialty
-        //                                           WHERE Id = @id";
+        // POST: TrainingPrograms/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, TrainingProgram trainingProgram)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @" UPDATE TrainingProgram
+                                                   SET Name = @Name, 
+                                                   StartDate = @StartDate,
+                                                   EndDate = @EndDate,
+                                                   MaxAttendees = @MaxAttendees,
+                                                   Specialty = @Specialty
+                                                   WHERE Id = @id
+                                                   ";
 
-        //                        cmd.Parameters.Add(new SqlParameter("@FirstName", instructor.FirstName));
-        //                        cmd.Parameters.Add(new SqlParameter("@LastName", instructor.LastName));
-        //                        cmd.Parameters.Add(new SqlParameter("@SlackHandle", instructor.SlackHandle));
-        //                        cmd.Parameters.Add(new SqlParameter("@CohortId", instructor.CohortId));
-        //                        cmd.Parameters.Add(new SqlParameter("@Specialty", instructor.Specialty));
-        //                        cmd.Parameters.Add(new SqlParameter("@id", instructor.Id));
+                        cmd.Parameters.Add(new SqlParameter("@Name", trainingProgram.Name));
+                        cmd.Parameters.Add(new SqlParameter("@StartDate", trainingProgram.StartDate));
+                        cmd.Parameters.Add(new SqlParameter("@EndDate", trainingProgram.EndDate));
+                        cmd.Parameters.Add(new SqlParameter("@MaxAttendees", trainingProgram.MaxAttendees));
+                        cmd.Parameters.Add(new SqlParameter("@id", trainingProgram.Id));
 
-        //                        var rowsaffected = cmd.ExecuteNonQuery();
+                        var rowsaffected = cmd.ExecuteNonQuery();
 
-        //                        if (rowsaffected < 1)
-        //                        {
-        //                            return NotFound();
+                        if (rowsaffected < 1)
+                        {
+                            return NotFound();
 
-        //                        }
-        //                    }
-        //                }
+                        }
+                    }
+                }
 
-        //                return RedirectToAction(nameof(Index));
-        //            }
-        //            catch
-        //            {
-        //                return View();
-        //            }
-        //        }
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
-        //        // GET: Instructors/Delete/5
+        //        // GET: TrainingPrograms/Delete/5
         //        public ActionResult Delete(int id)
         //        {
         //            var instructor = GetInstructorById(id);
