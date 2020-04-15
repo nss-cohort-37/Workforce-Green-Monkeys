@@ -124,10 +124,11 @@ namespace BangazonWorkforce.Controllers
         }
 
         // GET: TrainingPrograms/Edit/5
-        public ActionResult Edit()
+        public ActionResult Edit(int id)
         {
-         
-            return View();
+
+            var trainingProgram = GetTrainingProgramById(id);
+            return View(trainingProgram);
         }
 
         // POST: TrainingPrograms/Edit/5
@@ -146,8 +147,7 @@ namespace BangazonWorkforce.Controllers
                                                    SET Name = @Name, 
                                                    StartDate = @StartDate,
                                                    EndDate = @EndDate,
-                                                   MaxAttendees = @MaxAttendees,
-                                                   Specialty = @Specialty
+                                                   MaxAttendees = @MaxAttendees
                                                    WHERE Id = @id
                                                    ";
 
