@@ -69,7 +69,7 @@ namespace BangazonWorkforce.Controllers
         public ActionResult Details(int id)
         {
             var trainingProgram = GetTrainingProgramById(id);
-            var ProgramEmployees = GetTrainingProgramEmployees();
+            var ProgramEmployees = GetTrainingProgramEmployees(id);
             var viewModel = new TrainingProgramDetailViewModel()
             {
                 Name = trainingProgram.Name,
@@ -257,14 +257,19 @@ namespace BangazonWorkforce.Controllers
         }
 
 
-        private List<Employee> GetTrainingProgramEmployees()
+        private List<Employee> GetTrainingProgramEmployees(int id)
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT Id, FirstName, LastName FROM Employee";
+                    cmd.CommandText = @"SELECT e.Id, e.FirstName, e.LastName, et.TrainingProgramId, et.EmployeeId
+                                      FROM Employee e
+                                      LEFT JOIN EmployeeTraining et ON e.Id = et.EmployeeId 
+                                      WHERE et.TrainingProgramId = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
 
                     var reader = cmd.ExecuteReader();
                     var employees = new List<Employee>();
