@@ -73,11 +73,8 @@ namespace BangazonWorkforce.Controllers
                         {
 
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-
                             PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
-
                             Make = reader.GetString(reader.GetOrdinal("Make")),
-
                             Model = reader.GetString(reader.GetOrdinal("Model"))
 
                         };
@@ -98,141 +95,27 @@ namespace BangazonWorkforce.Controllers
                 }
             }
         }
+         // GET: Computers/Create
 
-
-
-        // GET: Computers/Details/1
-
-        public ActionResult Details(int id)
+        public ActionResult Create()
 
         {
 
-            var computer = GetComputerById(id);
+            var viewModel = new ComputerViewmodel();
 
-            return View(computer);
+            return View(viewModel);
 
         }
 
 
 
-        //// GET: Computers/Create
+        //POST: Computers/Create
 
-        //public ActionResult Create()
+       [HttpPost]
 
-        //{
+       [ValidateAntiForgeryToken]
 
-        //    var cohortOptions = GetCohortOptions();
-
-        //    var viewModel = new ComputerEditViewmodel()
-
-        //    {
-
-        //        ComputerOptions = computerOptions
-
-        //    };
-
-        //    return View(viewModel);
-
-        //}
-
-
-
-        // POST: Computers/Create
-
-        //[HttpPost]
-
-        //[ValidateAntiForgeryToken]
-
-        //public ActionResult Create(ComputerEditViewmodel computer)
-
-        //{
-
-        //    try
-
-        //    {
-
-        //        using (SqlConnection conn = Connection)
-
-        //        {
-
-        //            conn.Open();
-
-        //            using (SqlCommand cmd = conn.CreateCommand())
-
-        //            {
-
-        //                cmd.CommandText = @"INSERT INTO Computer (PurchaseDate, DecomissionDate, Make, Model)
-
-        //                                    OUTPUT INSERTED.Id
-
-        //                                    VALUES (@firstName, @lastName, @slackHandle, @cohortId)";
-
-
-
-        //                cmd.Parameters.Add(new SqlParameter("@purchaseDate", computer.PurchaseDate));
-
-        //                cmd.Parameters.Add(new SqlParameter("@decomissionDate", computer.DecomissionDate));
-
-        //                cmd.Parameters.Add(new SqlParameter("@make", computer.Make));
-
-        //                cmd.Parameters.Add(new SqlParameter("@model", computer.Model));
-
-
-
-        //                var id = (int)cmd.ExecuteScalar();
-
-        //                computer.ComputerId = id;
-
-
-
-        //                return RedirectToAction(nameof(Index));
-
-        //            }
-
-        //        }
-
-
-
-                
-
-        //    }
-
-        //    catch (Exception ex)
-
-        //    {
-
-        //        return View();
-
-        //    }
-
-        //}
-
-
-
-
-
-
-        // GET: Computers/Delete/5
-
-        public ActionResult Delete(int id)
-
-        {
-
-            var computer = GetComputerById(id);
-
-            return View(computer);
-
-        }
-
-
-
-        // POST: Computers/Delete/5
-
-        [HttpPost]
-
-        [ValidateAntiForgeryToken]
-
-        public ActionResult DeleteComputer([FromRoute] int id)
+        public ActionResult Create(ComputerViewmodel computer)
 
         {
 
@@ -250,22 +133,26 @@ namespace BangazonWorkforce.Controllers
 
                     {
 
-                        cmd.CommandText = "DELETE FROM Computer WHERE Id = @id";
+                        cmd.CommandText = @"INSERT INTO Computer (PurchaseDate, DecomissionDate, Make, Model)
 
-                        cmd.Parameters.Add(new SqlParameter("@id", id));
+                                            OUTPUT INSERTED.Id
+
+                                            VALUES (@firstName, @lastName, @slackHandle, @cohortId)";
 
 
 
-                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Add(new SqlParameter("@purchaseDate", computer.PurchaseDate));
+                        cmd.Parameters.Add(new SqlParameter("@decomissionDate", computer.DecomissionDate));
+                        cmd.Parameters.Add(new SqlParameter("@make", computer.Make));
+                        cmd.Parameters.Add(new SqlParameter("@model", computer.Model));
 
+                        var id = (int)cmd.ExecuteScalar();
+
+                        computer.Id = id;
+
+                        return RedirectToAction(nameof(Index));
                     }
-
                 }
-
-
-
-                return RedirectToAction(nameof(Index));
-
             }
 
             catch (Exception ex)
@@ -278,8 +165,64 @@ namespace BangazonWorkforce.Controllers
 
         }
 
+        // GET: Computers/Details/1
+        public ActionResult Details(int id)
 
+        {
 
+            var computer = GetComputerById(id);
+
+            return View(computer);
+
+        }
+
+        // GET: Computers/Delete/5
+        public ActionResult Delete(int id)
+
+        {
+
+            var computer = GetComputerById(id);
+
+            return View(computer);
+
+        }
+
+        // POST: Computers/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public ActionResult DeleteComputer([FromRoute] int id)
+
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+
+                {
+
+                    conn.Open();
+
+                    using (SqlCommand cmd = conn.CreateCommand())
+
+                    {
+                        cmd.CommandText = "DELETE FROM Computer WHERE Id = @id";
+
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return RedirectToAction(nameof(Index));
+
+            }
+
+            catch (Exception ex)
+
+            {
+                return View();
+            }
+        }
 
         private Computer GetComputerById(int id)
 
@@ -317,20 +260,16 @@ namespace BangazonWorkforce.Controllers
                         {
 
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-
                             PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
-
                             Make = reader.GetString(reader.GetOrdinal("Make")),
-
                             Model = reader.GetString(reader.GetOrdinal("Model"))
 
                         };
 
-                                                if(!reader.IsDBNull(reader.GetOrdinal("DecomissionDate")))
+                            if(!reader.IsDBNull(reader.GetOrdinal("DecomissionDate")))
                             {
                             computer.DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate"));
                          }
-
 
                     }
 
