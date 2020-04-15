@@ -37,8 +37,10 @@ namespace BangazonWorkforce.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id, Name, Budget
-                                      FROM Department ";
+                    cmd.CommandText = @"SELECT d.Id, d.[Name], d.Budget, Count(DepartmentId) as 'EmployeeCount'
+                                      FROM Department d
+                                      LEFT JOIN Employee e on d.Id = e.DepartmentId
+                                      GROUP BY d.Id, d.[Name], d.Budget";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -49,7 +51,8 @@ namespace BangazonWorkforce.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
-                            Budget = reader.GetInt32(reader.GetOrdinal("Budget"))                           
+                            Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
+                            EmployeeCount = reader.GetInt32(reader.GetOrdinal("EmployeeCount"))
                         };
 
                         departments.Add(department);
