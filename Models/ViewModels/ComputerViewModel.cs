@@ -13,7 +13,7 @@ namespace BangazonWorkforce.Models.ViewModels
     {
         public int Id { get; set; }
         
-        [Display(Name = "Computer")]
+        [Display(Name = "Purchase Date")]
         public DateTime PurchaseDate { get; set; }
         public DateTime? DecomissionDate { get; set; }
         public string Make { get; set; }
