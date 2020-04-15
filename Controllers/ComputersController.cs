@@ -62,14 +62,10 @@ namespace BangazonWorkforce.Controllers
 
                     var computers = new List<Computer>();
 
-
-
                     while(reader.Read())
-
                     {
 
                         var computer = new Computer()
-
                         {
 
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
@@ -81,7 +77,9 @@ namespace BangazonWorkforce.Controllers
 
                         if(!reader.IsDBNull(reader.GetOrdinal("DecomissionDate")))
                             {
+
                             computer.DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate"));
+
                          }
 
                         computers.Add(computer);
@@ -95,10 +93,9 @@ namespace BangazonWorkforce.Controllers
                 }
             }
         }
+
          // GET: Computers/Create
-
         public ActionResult Create()
-
         {
 
             var viewModel = new ComputerViewmodel();
@@ -107,18 +104,11 @@ namespace BangazonWorkforce.Controllers
 
         }
 
-
-
         //POST: Computers/Create
-
        [HttpPost]
-
        [ValidateAntiForgeryToken]
-
-        public ActionResult Create(ComputerViewmodel computer)
-
+        public ActionResult Create(Computer computer)
         {
-
             try
 
             {
@@ -133,16 +123,11 @@ namespace BangazonWorkforce.Controllers
 
                     {
 
-                        cmd.CommandText = @"INSERT INTO Computer (PurchaseDate, DecomissionDate, Make, Model)
-
+                        cmd.CommandText = @"INSERT INTO Computer (PurchaseDate, Make, Model)
                                             OUTPUT INSERTED.Id
-
-                                            VALUES (@firstName, @lastName, @slackHandle, @cohortId)";
-
-
+                                            VALUES (@PurchaseDate, @Make, @Model)";
 
                         cmd.Parameters.Add(new SqlParameter("@purchaseDate", computer.PurchaseDate));
-                        cmd.Parameters.Add(new SqlParameter("@decomissionDate", computer.DecomissionDate));
                         cmd.Parameters.Add(new SqlParameter("@make", computer.Make));
                         cmd.Parameters.Add(new SqlParameter("@model", computer.Model));
 
@@ -159,7 +144,7 @@ namespace BangazonWorkforce.Controllers
 
             {
 
-                return View();
+                return View(computer);
 
             }
 
@@ -191,7 +176,7 @@ namespace BangazonWorkforce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public ActionResult DeleteComputer([FromRoute] int id)
+        public ActionResult Delete([FromRoute] int id, Computer computer)
 
         {
             try
@@ -206,7 +191,6 @@ namespace BangazonWorkforce.Controllers
 
                     {
                         cmd.CommandText = "DELETE FROM Computer WHERE Id = @id";
-
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 
                         cmd.ExecuteNonQuery();
@@ -240,16 +224,11 @@ namespace BangazonWorkforce.Controllers
 
                     cmd.CommandText = "SELECT Id, PurchaseDate, DecomissionDate, Make, Model FROM Computer WHERE Id = @id";
 
-
-
                     cmd.Parameters.Add(new SqlParameter("@id", id));
-
-
 
                     var reader = cmd.ExecuteReader();
 
                     Computer computer = null;
-
 
                     if (reader.Read())
 
