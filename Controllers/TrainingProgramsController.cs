@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BangazonWorkforce.Models;
+using BangazonWorkforce.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -67,34 +68,17 @@ namespace BangazonWorkforce.Controllers
        // GET: TrainingPrograms/Details/1
         public ActionResult Details(int id)
         {
-            using (SqlConnection conn = Connection)
+            var trainingProgram = GetTrainingProgramById(id);
+            var ProgramEmployees = GetTrainingProgramEmployees();
+            var viewModel = new TrainingProgramDetailViewModel()
             {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = "SELECT Id, Name, StartDate, EndDate, MaxAttendees FROM TrainingProgram WHERE Id = @id";
-
-                    cmd.Parameters.Add(new SqlParameter("@id", id));
-
-                    var reader = cmd.ExecuteReader();
-                    TrainingProgram trainingProgram = null;
-
-                    if (reader.Read())
-                    {
-                        trainingProgram = new TrainingProgram()
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name")),
-                            StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
-                            EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
-                            MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees"))
-                        };
-
-                    }
-                    reader.Close();
-                    return View(trainingProgram);
-                }
-            }
+                Name = trainingProgram.Name,
+                StartDate = trainingProgram.StartDate,
+                EndDate = trainingProgram.EndDate,
+                MaxAttendees = trainingProgram.MaxAttendees,
+                Employees = ProgramEmployees
+            };
+            return View(viewModel);
         }
         // GET: TrainingPrograms/Create
         public ActionResult Create()
@@ -238,68 +222,72 @@ namespace BangazonWorkforce.Controllers
         //        }
 
 
-        //        private Instructor GetInstructorById(int id)
-        //        {
-        //            using (SqlConnection conn = Connection)
-        //            {
-        //                conn.Open();
-        //                using (SqlCommand cmd = conn.CreateCommand())
-        //                {
-        //                    cmd.CommandText = "SELECT Id, FirstName, LastName, CohortId, Specialty, SlackHandle FROM Instructor WHERE Id = @id";
+        private TrainingProgram GetTrainingProgramById(int id)
+        {
 
-        //                    cmd.Parameters.Add(new SqlParameter("@id", id));
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, Name, StartDate, EndDate, MaxAttendees FROM TrainingProgram WHERE Id = @id";
 
-        //                    var reader = cmd.ExecuteReader();
-        //                    Instructor instructor = null;
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
 
-        //                    if (reader.Read())
-        //                    {
-        //                        instructor = new Instructor()
-        //                        {
-        //                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-        //                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-        //                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-        //                            SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
-        //                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
-        //                            Specialty = reader.GetString(reader.GetOrdinal("Specialty"))
-        //                        };
+                    var reader = cmd.ExecuteReader();
+                    TrainingProgram trainingProgram = null;
 
-        //                    }
-        //                    reader.Close();
-        //                    return instructor;
-        //                }
-        //            }
-        //        }
+                    if (reader.Read())
+                    {
+                        trainingProgram = new TrainingProgram()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+                            EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+                            MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees"))
+                        };
+
+                    }
+                    reader.Close();
+                    return trainingProgram;
+                }
+            }
+            
+        }
 
 
-        //        private List<SelectListItem> GetCohortOptions()
-        //        {
-        //            using (SqlConnection conn = Connection)
-        //            {
-        //                conn.Open();
-        //                using (SqlCommand cmd = conn.CreateCommand())
-        //                {
-        //                    cmd.CommandText = "SELECT Id, Name FROM Cohort";
+        private List<Employee> GetTrainingProgramEmployees()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, FirstName, LastName FROM Employee";
 
-        //                    var reader = cmd.ExecuteReader();
-        //                    var options = new List<SelectListItem>();
+                    var reader = cmd.ExecuteReader();
+                    var employees = new List<Employee>();
 
-        //                    while (reader.Read())
-        //                    {
-        //                        var option = new SelectListItem()
-        //                        {
-        //                            Text = reader.GetString(reader.GetOrdinal("Name")),
-        //                            Value = reader.GetInt32(reader.GetOrdinal("Id")).ToString()
-        //                        };
+                    while (reader.Read())
+                    {
+                        var employee = new Employee()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName"))
 
-        //                        options.Add(option);
 
-        //                    }
-        //                    reader.Close();
-        //                    return options;
-        //                }
-        //            }
-        //        }
+                        };
+
+                        employees.Add(employee);
+
+                    }
+                    reader.Close();
+                    return employees;
+                }
+            }
+        }
 
     }
 }
