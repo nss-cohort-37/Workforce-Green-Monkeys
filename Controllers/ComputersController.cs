@@ -98,9 +98,7 @@ namespace BangazonWorkforce.Controllers
         public ActionResult Create()
         {
 
-            var viewModel = new ComputerViewmodel();
-
-            return View(viewModel);
+            return View();
 
         }
 
