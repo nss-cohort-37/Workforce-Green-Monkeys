@@ -64,7 +64,7 @@ namespace BangazonWorkforce.Controllers
         }
 
 
-        // GET: Departments/Details/5
+        // GET: Departments/Details/1
         public ActionResult Details(int id)
         {
             var department = GetDepartmentById(id);
@@ -76,7 +76,7 @@ namespace BangazonWorkforce.Controllers
         {
             var viewModel = new DepartmentEditViewmodel()
             {
-
+                
             };
             return View(viewModel);
         }
@@ -173,7 +173,7 @@ namespace BangazonWorkforce.Controllers
         }
 
 
-        // POST: Departments/Delete/5
+        // POST: Departments/Delete/1
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Department department)
