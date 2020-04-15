@@ -39,9 +39,10 @@ namespace BangazonWorkforce.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    SELECT e.Id, FirstName, LastName, DepartmentId, d.[Name]
+                    SELECT e.Id, FirstName, LastName, e.DepartmentId, d.[Name]
                     FROM Employee e
-                    LEFT JOIN Department d ON DepartmentId = d.id";
+                    LEFT JOIN Department d ON e.id = d.Id 
+                    WHERE Name IS NOT NULL";
 
                     var reader = cmd.ExecuteReader();
                     var employees = new List<Employee>();
@@ -78,9 +79,11 @@ namespace BangazonWorkforce.Controllers
         public ActionResult Create()
         {
             var departmentOptions = GetDepartmentOptions();
+            var computerOptions = GetComputerOptions();
             var viewModel = new EmployeeEditViewModel()
             {
-                DepartmentOptions = departmentOptions
+                DepartmentOptions = departmentOptions,
+                ComputerOptions = computerOptions
             };
             return View(viewModel);
         }
@@ -89,23 +92,28 @@ namespace BangazonWorkforce.Controllers
         //POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(EmployeeEditViewModel employee)
+        //public ActionResult Create(EmployeeEditViewModel employee)
+             public ActionResult Create(EmployeeEditViewModel employee)
         {
             try
+                //debug here
             {
                 using (SqlConnection conn = Connection)
                 {
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"INSERT INTO Employee (FirstName, LastName, IsSupervisor, Name)
+                        cmd.CommandText = @"INSERT INTO Employee (FirstName, LastName, IsSupervisor, DepartmentId, ComputerId, Email)
                                             OUTPUT INSERTED.Id
-                                            VALUES (@firstName, @lastName, @issupevisor, @name)";
+                                            VALUES (@firstName, @lastName, @issupervisor, @departmentid, @computerid, @email)";
 
                         cmd.Parameters.Add(new SqlParameter("@firstName", employee.FirstName));
                         cmd.Parameters.Add(new SqlParameter("@lastName", employee.LastName));
                         cmd.Parameters.Add(new SqlParameter("@issupervisor", employee.IsSupervisor));
-                        cmd.Parameters.Add(new SqlParameter("@name", employee.Name));
+                        cmd.Parameters.Add(new SqlParameter("@departmentid", employee.DepartmentId));
+                        cmd.Parameters.Add(new SqlParameter("@computerid", employee.ComputerId));
+                        cmd.Parameters.Add(new SqlParameter("@email", employee.Email));
+                      
 
                         var id = (int)cmd.ExecuteScalar();
                         employee.EmployeeId = id;
@@ -117,6 +125,7 @@ namespace BangazonWorkforce.Controllers
             }
             catch (Exception ex)
             {
+                // debug here
                 return View();
             }
         }
@@ -252,6 +261,36 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+
+        private List<SelectListItem> GetComputerOptions()
+        {
+
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, Model FROM Computer";
+
+                    var reader = cmd.ExecuteReader();
+                    var options = new List<SelectListItem>();
+
+                    while (reader.Read())
+                    {
+                        var option = new SelectListItem()
+                        {
+                            Text = reader.GetString(reader.GetOrdinal("Model")),
+                            Value = reader.GetInt32(reader.GetOrdinal("Id")).ToString(),
+                        };
+
+                        options.Add(option);
+
+                    }
+                    reader.Close();
+                    return options;
+                }
+            }
+        }
 
         private Employee GetEmployeeById(int id)
         {

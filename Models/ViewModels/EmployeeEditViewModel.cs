@@ -31,8 +31,21 @@ namespace BangazonWorkforce.Models.ViewModels
         //[MinLength(3, ErrorMessage = "Department Name should have at least 3 characters Einstein!")]
         public string Name { get; set; }
 
+        [Display(Name = "Department Id")]
+        public int DepartmentId { get; set; }
+
+        public int ComputerId { get; set; }
+
+        [Display(Name = "Email")]
+        [Required(ErrorMessage = "Email is Required Dum! Dum!")]
+        [MinLength(3, ErrorMessage = "Email should have at least 3 characters Einstein!")]
+        public string Email { get; set; }
+
         public List<SelectListItem> DepartmentOptions { get; set; }
+
+
+        public List<SelectListItem> ComputerOptions { get; set; }
 
     }
 }
-// Adam talks about StudentEditViewiModel in NSS_MVC_INTRO_P11 around 6 min point
+// Adam talks about StudentEditViewModel in NSS_MVC_INTRO_P11 around 6 min point
