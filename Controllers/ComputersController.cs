@@ -9,7 +9,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using BangazonWorkforce.Models;
 using BangazonWorkforce.Models.ViewModels;
-using System.Runtime.CompilerServices;
 
 namespace BangazonWorkforce.Controllers
 
@@ -77,18 +76,21 @@ namespace BangazonWorkforce.Controllers
 
                             PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
 
-                            DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate")),
-
                             Make = reader.GetString(reader.GetOrdinal("Make")),
 
                             Model = reader.GetString(reader.GetOrdinal("Model"))
 
                         };
 
+                        if(!reader.IsDBNull(reader.GetOrdinal("DecomissionDate")))
+                            {
+                            computer.DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate"));
+                         }
+
                         computers.Add(computer);
 
-                    }
-
+                     }
+                
                     reader.Close();
 
                     return View(computers);
@@ -137,73 +139,73 @@ namespace BangazonWorkforce.Controllers
 
         // POST: Computers/Create
 
-        [HttpPost]
+        //[HttpPost]
 
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
 
-        public ActionResult Create(ComputerEditViewmodel computer)
+        //public ActionResult Create(ComputerEditViewmodel computer)
 
-        {
+        //{
 
-            try
+        //    try
 
-            {
+        //    {
 
-                using (SqlConnection conn = Connection)
+        //        using (SqlConnection conn = Connection)
 
-                {
+        //        {
 
-                    conn.Open();
+        //            conn.Open();
 
-                    using (SqlCommand cmd = conn.CreateCommand())
+        //            using (SqlCommand cmd = conn.CreateCommand())
 
-                    {
+        //            {
 
-                        cmd.CommandText = @"INSERT INTO Computer (PurchaseDate, DecomissionDate, Make, Model)
+        //                cmd.CommandText = @"INSERT INTO Computer (PurchaseDate, DecomissionDate, Make, Model)
 
-                                            OUTPUT INSERTED.Id
+        //                                    OUTPUT INSERTED.Id
 
-                                            VALUES (@firstName, @lastName, @slackHandle, @cohortId)";
-
-
-
-                        cmd.Parameters.Add(new SqlParameter("@purchaseDate", computer.PurchaseDate));
-
-                        cmd.Parameters.Add(new SqlParameter("@decomissionDate", computer.DecomissionDate));
-
-                        cmd.Parameters.Add(new SqlParameter("@make", computer.make));
-
-                        cmd.Parameters.Add(new SqlParameter("@model", computer.Model));
+        //                                    VALUES (@firstName, @lastName, @slackHandle, @cohortId)";
 
 
 
-                        var id = (int)cmd.ExecuteScalar();
+        //                cmd.Parameters.Add(new SqlParameter("@purchaseDate", computer.PurchaseDate));
 
-                        computer.ComputerId = id;
+        //                cmd.Parameters.Add(new SqlParameter("@decomissionDate", computer.DecomissionDate));
+
+        //                cmd.Parameters.Add(new SqlParameter("@make", computer.Make));
+
+        //                cmd.Parameters.Add(new SqlParameter("@model", computer.Model));
 
 
 
-                        return RedirectToAction(nameof(Index));
+        //                var id = (int)cmd.ExecuteScalar();
 
-                    }
+        //                computer.ComputerId = id;
 
-                }
+
+
+        //                return RedirectToAction(nameof(Index));
+
+        //            }
+
+        //        }
 
 
 
                 
 
-            }
+        //    }
 
-            catch (Exception ex)
+        //    catch (Exception ex)
 
-            {
+        //    {
 
-                return View();
+        //        return View();
 
-            }
+        //    }
 
-        }
+        //}
 
 
 
