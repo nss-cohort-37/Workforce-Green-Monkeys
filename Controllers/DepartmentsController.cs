@@ -37,8 +37,10 @@ namespace BangazonWorkforce.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id, Name, Budget
-                                      FROM Department ";
+                    cmd.CommandText = @"SELECT d.Id, d.[Name], d.Budget, Count(DepartmentId) as 'EmployeeCount'
+                                      FROM Department d
+                                      LEFT JOIN Employee e on d.Id = e.DepartmentId
+                                      GROUP BY d.Id, d.[Name], d.Budget";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -49,7 +51,8 @@ namespace BangazonWorkforce.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
-                            Budget = reader.GetInt32(reader.GetOrdinal("Budget"))                           
+                            Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
+                            EmployeeCount = reader.GetInt32(reader.GetOrdinal("EmployeeCount"))
                         };
 
                         departments.Add(department);
@@ -64,7 +67,7 @@ namespace BangazonWorkforce.Controllers
         }
 
 
-        // GET: Departments/Details/5
+        // GET: Departments/Details/1
         public ActionResult Details(int id)
         {
             var department = GetDepartmentById(id);
@@ -76,7 +79,7 @@ namespace BangazonWorkforce.Controllers
         {
             var viewModel = new DepartmentEditViewmodel()
             {
-
+                
             };
             return View(viewModel);
         }
@@ -173,7 +176,7 @@ namespace BangazonWorkforce.Controllers
         }
 
 
-        // POST: Departments/Delete/5
+        // POST: Departments/Delete/1
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Department department)
