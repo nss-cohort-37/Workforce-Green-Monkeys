@@ -43,13 +43,15 @@
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Employees) 
         </dt>
+    <dd class="col-sm-10">
         @foreach (Employee employee in Model.Employees)
         {
-    <dd class="col-sm-10">
-        @Html.DisplayFor(Employee => employee.FirstName)
-        @Html.DisplayFor(Employee => employee.LastName)
-    </dd>
+            <div>
+                <span> @Html.DisplayFor(Employee => employee.FirstName)</span>
+                <span>@Html.DisplayFor(Employee => employee.LastName)</span>
+            </div>
         }
+    </dd>
         </dl>
 </div>
 <div>
