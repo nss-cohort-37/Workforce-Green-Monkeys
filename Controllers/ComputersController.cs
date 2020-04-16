@@ -97,15 +97,19 @@ namespace BangazonWorkforce.Controllers
          // GET: Computers/Create
         public ActionResult Create()
         {
-
-            return View();
+            var employeeOptions = GetEmployeeOptions();
+            var viewModel = new ComputerCreateViewmodel()
+            {
+                EmployeeOptions = employeeOptions
+            };
+            return View(viewModel);
 
         }
 
         //POST: Computers/Create
        [HttpPost]
        [ValidateAntiForgeryToken]
-        public ActionResult Create(Computer computer)
+        public ActionResult Create(Computer ComputerCreateViewModel)
         {
             try
 
@@ -125,13 +129,13 @@ namespace BangazonWorkforce.Controllers
                                             OUTPUT INSERTED.Id
                                             VALUES (@PurchaseDate, @Make, @Model)";
 
-                        cmd.Parameters.Add(new SqlParameter("@purchaseDate", computer.PurchaseDate));
-                        cmd.Parameters.Add(new SqlParameter("@make", computer.Make));
-                        cmd.Parameters.Add(new SqlParameter("@model", computer.Model));
+                        cmd.Parameters.Add(new SqlParameter("@purchaseDate", ComputerCreateViewModel.PurchaseDate));
+                        cmd.Parameters.Add(new SqlParameter("@make", ComputerCreateViewModel.Make));
+                        cmd.Parameters.Add(new SqlParameter("@model", ComputerCreateViewModel.Model));
 
                         var id = (int)cmd.ExecuteScalar();
 
-                        computer.Id = id;
+                        ComputerCreateViewModel.Id = id;
 
                         return RedirectToAction(nameof(Index));
                     }
@@ -142,7 +146,7 @@ namespace BangazonWorkforce.Controllers
 
             {
 
-                return View(computer);
+                return View(ComputerCreateViewModel);
 
             }
 
@@ -206,6 +210,64 @@ namespace BangazonWorkforce.Controllers
                 return View();
             }
         }
+
+
+        private List<SelectListItem> GetEmployeeOptions()
+
+        {
+
+            using (SqlConnection conn = Connection)
+
+            {
+
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+
+                {
+
+                    cmd.CommandText = "SELECT Id, FirstName, LastName FROM Employee";
+
+
+
+                    var reader = cmd.ExecuteReader();
+
+                    var options = new List<SelectListItem>();
+
+
+
+                    while (reader.Read())
+
+                    {
+
+                        var option = new SelectListItem()
+
+                        {
+
+                            Text = reader.GetString(reader.GetOrdinal("FirstName")),
+                            Value = reader.GetInt32(reader.GetOrdinal("Id")).ToString()
+
+                        };
+
+
+
+                        options.Add(option);
+
+
+
+                    }
+
+                    reader.Close();
+
+                    return options;
+
+                }
+
+            }
+
+        }
+
+
 
         private Computer GetComputerById(int id)
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BangazonWorkforce.Models.ViewModels
 
 {
-    public class ComputerViewmodel
+    public class ComputerCreateViewmodel
 
     {
         public int Id { get; set; }
@@ -18,6 +18,11 @@ namespace BangazonWorkforce.Models.ViewModels
         public DateTime? DecomissionDate { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }
+
+        [Display(Name = "Employee")]
+        [Required]
+        public int ComputerId { get; set; }
+        public List<SelectListItem> EmployeeOptions { get; set; }
 
     }
 
