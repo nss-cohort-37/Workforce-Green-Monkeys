@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using BangazonWorkforce.Models;
 using BangazonWorkforce.Models.ViewModels;
 
+
+
 namespace BangazonWorkforce.Controllers
 {
     public class DepartmentsController : Controller
@@ -29,6 +31,9 @@ namespace BangazonWorkforce.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
+
+
+
         // GET: Departments
         public ActionResult Index()
         {
@@ -67,12 +72,15 @@ namespace BangazonWorkforce.Controllers
         }
 
 
+
         // GET: Departments/Details/1
         public ActionResult Details(int id)
         {
             var departmentById = GetDepartmentById(id);
             return View(departmentById);
         }
+
+
 
         // GET: Departments/Create
         public ActionResult Create()
@@ -83,6 +91,7 @@ namespace BangazonWorkforce.Controllers
             };
             return View(viewModel);
         }
+
 
         // POST: Departments/Create
         [HttpPost]
@@ -117,6 +126,8 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+
+
         // GET: Departments/Edit/1
         public ActionResult Edit(int id)
         {
@@ -129,6 +140,7 @@ namespace BangazonWorkforce.Controllers
             };
             return View(viewModel);
         }
+
 
         // POST: Departments/Edit/5
         [HttpPost]
@@ -168,13 +180,16 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+
+
         private Department GetDepartmentById(int id)
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
-                {
+                {                     
+                                      //Accommodate Sql request for data you need in Details
                     cmd.CommandText = @"SELECT d.Id, d.[Name], d.Budget, e.FirstName, e.LastName 
                                       FROM Department d
                                       LEFT JOIN Employee e ON d.Id = e.DepartmentId
@@ -195,10 +210,11 @@ namespace BangazonWorkforce.Controllers
                                 Name = reader.GetString(reader.GetOrdinal("Name")),
                                 Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
                                 DepartmentEmployees = new List<Employee>()
-
+                                //Employee List
                             };
-                        }
-
+                        }   
+                        
+                        //Incorporate Employee data to list them in Details View
                         if(!reader.IsDBNull(reader.GetOrdinal("FirstName")))
                         {
                             department.DepartmentEmployees.Add(new Employee()
