@@ -33,17 +33,13 @@ namespace BangazonWorkforce.Controllers
             get
 
             {
-
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-
             }
-
         }
 
 
-
         // GET: Computers
-        public ActionResult Index()
+        public ActionResult Index(string searchString)
 
         {
             using(SqlConnection conn = Connection)
@@ -56,8 +52,12 @@ namespace BangazonWorkforce.Controllers
 
                 {
 
-                    cmd.CommandText = "SELECT Id, PurchaseDate, DecomissionDate, Make, Model FROM Computer";
-
+                    cmd.CommandText = "SELECT Id, PurchaseDate, DecomissionDate, Make, Model FROM Computer WHERE 1 = 1";
+                    if (searchString != null)
+                    {
+                        cmd.CommandText += " AND Make LIKE @searchString OR Model Like @searchString";
+                        cmd.Parameters.Add(new SqlParameter("@searchString", "%" + searchString + "%"));
+                    }
                     var reader = cmd.ExecuteReader();
 
                     var computers = new List<Computer>();
