@@ -46,6 +46,9 @@ namespace BangazonWorkforce.Models.ViewModels
 
         public List<SelectListItem> ComputerOptions { get; set; }
 
+
+        public List<SelectListItem> TrainingPrograms { get; set; }
+
     }
 }
 // Adam talks about StudentEditViewModel in NSS_MVC_INTRO_P11 around 6 min point

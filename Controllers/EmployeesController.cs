@@ -9,6 +9,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using BangazonWorkforce.Models;
 using BangazonWorkforce.Models.ViewModels;
+using System.Data;
 
 namespace BangazonWorkforce.Controllers
 {
@@ -74,8 +75,78 @@ namespace BangazonWorkforce.Controllers
             return View(employee);
         }
 
-         //this Get retrieves the FORM
-         //GET: Employees/Create
+        //GET: Employees/Details/1
+        //public ActionResult Details(int id)
+        //{
+        //    using (SqlConnection conn = Connection)
+        //    {
+        //        conn.Open();
+        //        using (SqlCommand cmd = conn.CreateCommand())
+        //        {
+        //            cmd.CommandText = @"SELECT e.Id, e.FirstName, e.LastName, d.[Name] AS DeptName, c.Make, c.Model, e.Email, e.IsSupervisor, tp.Name, tp.StartDate,tp.EndDate
+        //                             FROM Employee e
+        //                             LEFT JOIN Department d ON d.Id = e.DepartmentId
+        //                             LEFT JOIN Computer c ON c.Id = e.ComputerId
+        //                             LEFT JOIN EmployeeTraining et ON et.Id = e.Id
+        //                             LEFT JOIN TrainingProgram tp ON tp.Id = et.Id
+        //                             WHERE e.Id = @Id";
+
+        //            cmd.Parameters.Add(new SqlParameter("@id", id));
+
+        //            var reader = cmd.ExecuteReader();
+        //            Employee employee = null;
+
+        //            while (reader.Read())
+        //            {
+        //                if (employee == null)
+        //                {
+        //                    employee = new Employee()
+        //                    {
+        //                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+        //                        FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+        //                        LastName = reader.GetString(reader.GetOrdinal("LastName")),
+        //                        IsSupervisor = reader.GetBoolean(reader.GetOrdinal("IsSupervisor")),
+        //                        Email = reader.GetString(reader.GetOrdinal("Email")),
+        //                        Department = new Department
+        //                        {
+        //                            Name = reader.GetString(reader.GetOrdinal("DeptName"))
+        //                        },
+        //                        Computer = new Computer
+        //                        {
+        //                            Make = reader.GetString(reader.GetOrdinal("Make")),
+        //                            Model = reader.GetString(reader.GetOrdinal("Model"))
+        //                        },
+        //                        TrainingProgram = new List<TrainingProgram>()
+
+        //                    };
+        //                }
+        //                if (!reader.IsDBNull(reader.GetOrdinal("Name")))
+        //                {
+        //                    employee.TrainingProgram.Add(new TrainingProgram()
+        //                    {
+        //                        Name = reader.GetString(reader.GetOrdinal("Name")),
+        //                        StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+        //                        EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate"))
+        //                    });
+        //                }
+        //                else
+        //                {
+        //                    employee.TrainingProgram.Add(new TrainingProgram()
+        //                    {
+        //                        Name = null,
+        //                        StartDate = null,
+        //                        EndDate = null
+        //                    });
+        //                }
+        //            }
+        //            reader.Close();
+        //            return View(employee);
+        //        }
+        //    }
+        //}
+
+        //this Get retrieves the FORM
+        //GET: Employees/Create
         public ActionResult Create()
         {
             var departmentOptions = GetDepartmentOptions();
@@ -131,69 +202,63 @@ namespace BangazonWorkforce.Controllers
         }
 
 
-        // return the FORM
-        //// GET: Employees/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    var student = GetStudentById(id);
-        //    var cohortOptions = GetCohortOptions();
-        //    var viewModel = new StudentEditViewModel()
-        //    {
-        //        StudentId = student.Id,
-        //        FirstName = student.FirstName,
-        //        LastName = student.LastName,
-        //        CohortId = student.CohortId,
-        //        SlackHandle = student.SlackHandle,
-        //        CohortOptions = cohortOptions
-        //        // use a helper method GetCohortOptions to get cohorts below
+         //return the FORM
+        // GET: Employees/Edit/5
+        public ActionResult Edit(int id)
+        {
+            var employee = GetEmployeeById(id);
+            var DepartmentOptions = GetDepartmentOptions();
+            var ComputerOptions = GetComputerOptions();
+            var viewModel = new EmployeeEditViewModel()
+            {
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                DepartmentOptions = DepartmentOptions,
+                ComputerOptions = ComputerOptions
+            };
+            return View(viewModel);
+
+        }
 
 
-        //    };
-        //    return View(viewModel);
-        //}
+        //runs the POST
+        //POST: Employees/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, EmployeeEditViewModel employee)
+        {
+            try
+            {
+
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Employee
+                                         SET LastName = @lastName,
+                                        ComputerId = @computerId,
+                                        DepartmentId = @departmentId
+                                        WHERE Id = @id";
+
+                        cmd.Parameters.Add(new SqlParameter("@lastName", employee.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@departmentid", employee.DepartmentId));
+                        cmd.Parameters.Add(new SqlParameter("@computerid", employee.ComputerId));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        var rowsAffected = cmd.ExecuteNonQuery();
 
 
-        // runs the POST
-        // POST: Employees/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, StudentEditViewModel student)
-        //{
-        //    try
-        //    {
+                    }
+                }
 
-        //        using (SqlConnection conn = Connection)
-        //        {
-        //            conn.Open();
-        //            using (SqlCommand cmd = conn.CreateCommand())
-        //            {
-        //                cmd.CommandText = @"UPDATE Student
-        //                                 SET FirstName = @firstName,
-        //                                     LastName = @lastName,
-        //                                     SlackHandle =@slackhandle,
-        //                                     CohortID = @cohortId
-        //                                        WHERE Id = @id";
-
-
-        //                cmd.Parameters.Add(new SqlParameter("@firstName", student.FirstName));
-        //                cmd.Parameters.Add(new SqlParameter("@lastName", student.LastName));
-        //                cmd.Parameters.Add(new SqlParameter("@slackHandle", student.SlackHandle));
-        //                cmd.Parameters.Add(new SqlParameter("@cohortId", student.CohortId));
-        //                cmd.Parameters.Add(new SqlParameter("@id", id));
-
-        //                var rowsAffected = cmd.ExecuteNonQuery();
-
-
-        //            }
-        //        }
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
         // GET: Employees/Delete/5
         //public ActionResult Delete(int id)
@@ -299,9 +364,12 @@ namespace BangazonWorkforce.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id, FirstName, LastName
-                        FROM Employee
-                        WHERE Id = @Id;";
+                    cmd.CommandText = @"SELECT e.Id, FirstName, e.LastName, c.Make, c.Model, tp.Name
+FROM Employee e
+LEFT JOIN Computer c ON c.Id = e.ComputerId
+LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.Id
+LEFT JOIN TrainingProgram tp ON et.TrainingProgramId = tp.Id
+WHERE e.Id =@id";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
@@ -324,6 +392,57 @@ namespace BangazonWorkforce.Controllers
                     return employee;
                 }
             }
+
+
+
+
+
+        }
+
+        private Employee GetEmployeeById2(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT e.Id, FirstName, e.LastName, c.Make, c.Model, tp.Name. e.Computer
+                                        FROM Employee e
+                                        LEFT JOIN Computer c ON c.Id = e.ComputerId
+                                        LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.Id
+                                        LEFT JOIN TrainingProgram tp ON et.TrainingProgramId = tp.Id
+                                        WHERE e.Id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    var reader = cmd.ExecuteReader();
+                    Employee employee = null;
+
+                    if (reader.Read())
+                    {
+                        employee = new Employee()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName"))
+                            //Make = reader.GetString(reader.GetOrdinal("Make")),
+                            //Model = reader.GetString(reader.GetOrdinal("Model")),
+                            //Computer = Computer,
+                            //Name = reader.GetString(reader.GetOrdinal("Name"))
+
+
+                        };
+
+                    }
+                    reader.Close();
+                    return employee;
+                }
+            }
+
+
+
+
+
         }
     }
 }

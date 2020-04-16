@@ -13,5 +13,9 @@ namespace BangazonWorkforce.Models
         public DateTime? EndDate { get; set; }
         public int MaxAtendees { get; set; }
 
+        public static implicit operator TrainingProgram(List<TrainingProgram> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

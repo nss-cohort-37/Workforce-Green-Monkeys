@@ -31,6 +31,9 @@ namespace BangazonWorkforce.Models
         [Display(Name = "Computer")]
         public Computer Computer { get; set; }
 
+        [Display(Name = "Training")]
+        public TrainingProgram TrainingProgram { get; set; }
+
         public string Name { get; set; }
 
     }
