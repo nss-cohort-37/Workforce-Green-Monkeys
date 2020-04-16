@@ -23,5 +23,7 @@ namespace BangazonWorkforce.Models.ViewModels
         [Required(ErrorMessage = "Budget is Required")]
         public int Budget { get; set; }
 
+        public int EmployeeCount { get; set; }
+
     }
 }
