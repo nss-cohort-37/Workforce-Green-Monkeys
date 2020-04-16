@@ -158,8 +158,12 @@ namespace BangazonWorkforce.Controllers
         {
 
             var computer = GetComputerById(id);
-
-            return View(computer);
+            var EmployeesComputers = GetEmployeeByComputer(id);
+            var viewModel = new ComputerDetailViewModel()
+            {
+                Id = id
+            };
+            return View(viewModel);
 
         }
 
@@ -267,7 +271,36 @@ namespace BangazonWorkforce.Controllers
 
         }
 
+                private Employee GetEmployeeByComputer(int id)
+        {
 
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, FirstName FROM Employee WHERE ComputerId = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    var reader = cmd.ExecuteReader();
+                    Employee employee = null;
+
+                    if (reader.Read())
+                    {
+                        employee = new Employee()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                        };
+
+                    }
+                    reader.Close();
+                    return employee;
+                }
+            }
+            
+        }
 
         private Computer GetComputerById(int id)
 
