@@ -23,20 +23,28 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt class="col-sm-2">
+
             @Html.DisplayNameFor(model => model.Budget)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Budget)
         </dd>
         <dt class="col-sm-2">
-            Employee Count
+            Employees:
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EmployeeCount)
+            <ol>
+                @foreach (var employee in Model.DepartmentEmployees)
+                 {
+                    <li>
+                        @Html.DisplayFor(modelItem => employee.FirstName) @Html.DisplayFor(modelItem => employee.LastName)
+                    </li>
+                 }
+            </ol>
         </dd>
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     <a asp-action="Index">Back to List</a>
 </div>

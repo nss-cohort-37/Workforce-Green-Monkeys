@@ -28,8 +28,9 @@ namespace BangazonWorkforce.Models
 
         public int ComputerId { get; set; }
 
+
         [Display(Name = "Computer")]
-        public Computer Computer { get; set; }
+        public Computer? Computer { get; set; }
 
         [Display(Name = "Model")]
         public string Model { get; set; }
@@ -40,6 +41,8 @@ namespace BangazonWorkforce.Models
 
         [Display(Name = "Department Name")]
         public string Name { get; set; }
+
+
 
     }
 }

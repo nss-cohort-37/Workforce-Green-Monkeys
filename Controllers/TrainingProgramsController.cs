@@ -65,7 +65,43 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-       // GET: TrainingPrograms/Details/1
+        // GET: Training Programs - only past Dates
+        public ActionResult History()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    // This SQL query is only getting training programs that End before today
+                    cmd.CommandText = @"SELECT Id, Name, StartDate, EndDate, MaxAttendees 
+                                      FROM TrainingProgram
+                                      WHERE EndDate < GETDATE()";
+
+
+                    var reader = cmd.ExecuteReader();
+                    var trainingPrograms = new List<TrainingProgram>();
+
+                    while (reader.Read())
+                    {
+                        var trainingProgram = new TrainingProgram()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+                            EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+                            MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees")),
+
+                        };
+                        trainingPrograms.Add(trainingProgram);
+                    }
+                    reader.Close();
+                    return View(trainingPrograms);
+                }
+            }
+        }
+
+        // GET: TrainingPrograms/Details/1
         public ActionResult Details(int id)
         {
             var trainingProgram = GetTrainingProgramById(id);
@@ -176,41 +212,57 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-        //        // GET: TrainingPrograms/Delete/5
-        //        public ActionResult Delete(int id)
-        //        {
-        //            var instructor = GetInstructorById(id);
-        //            return View(instructor);
-        //        }
+        // GET: TrainingPrograms/Delete/5
+        public ActionResult Delete(int id)
+        {
+            var trainingProgram = GetTrainingProgramById(id);
+            return View(trainingProgram);
+        }
 
-        //        // POST: Instructors/Delete/5
-        //        [HttpPost]
-        //        [ValidateAntiForgeryToken]
-        //        public ActionResult Delete(int id, Instructor instructor)
-        //        {
-        //            try
-        //            {
-        //                using (SqlConnection conn = Connection)
-        //                {
-        //                    conn.Open();
-        //                    using (SqlCommand cmd = conn.CreateCommand())
-        //                    {
-        //                        cmd.CommandText = "DELETE FROM Instructor WHERE Id = @id";
-        //                        cmd.Parameters.Add(new SqlParameter("@id", id));
+        // POST: TrainingPrograms/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, TrainingProgram trainingProgram)
+        {
+            DeleteEmployeeTraining(id);
+            try
+            {
+                
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "DELETE FROM TrainingProgram WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
 
-        //                        cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery();
 
-        //                    }
-        //                }
+                    }
+                }
 
-        //                return RedirectToAction(nameof(Index));
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                return View();
-        //            }
-        //        }
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+        }
+        // this is a method to delete employee - training relationships when deleting a program 
+        private void DeleteEmployeeTraining(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"  DELETE FROM EmployeeTraining WHERE TrainingProgramId = @TrainingProgramId";
+                    cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", id));
 
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                }
+            }
+        }
 
         private TrainingProgram GetTrainingProgramById(int id)
         {
