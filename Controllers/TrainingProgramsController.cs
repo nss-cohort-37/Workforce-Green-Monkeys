@@ -72,6 +72,7 @@ namespace BangazonWorkforce.Controllers
             var ProgramEmployees = GetTrainingProgramEmployees(id);
             var viewModel = new TrainingProgramDetailViewModel()
             {
+                Id = id,
                 Name = trainingProgram.Name,
                 StartDate = trainingProgram.StartDate,
                 EndDate = trainingProgram.EndDate,
