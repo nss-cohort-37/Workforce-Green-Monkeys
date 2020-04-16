@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BangazonWorkforce.Models;
+using BangazonWorkforce.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -64,45 +65,22 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-        //        // GET: Instructors/Details/5
-        //        public ActionResult Details(int id)
-        //        {
-        //            using (SqlConnection conn = Connection)
-        //            {
-        //                conn.Open();
-        //                using (SqlCommand cmd = conn.CreateCommand())
-        //                {
-        //                    cmd.CommandText = @"SELECT Id, FirstName, LastName, SlackHandle, CohortId, Specialty
-        //                                    FROM Instructor
-        //                                    WHERE Id =@id";
-
-        //                    cmd.Parameters.Add(new SqlParameter("@id", id));
-
-
-
-        //                    var reader = cmd.ExecuteReader();
-        //                    Instructor instructor = null;
-
-        //                    if (reader.Read())
-        //                    {
-        //                        instructor = new Instructor()
-        //                        {
-        //                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-        //                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-        //                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-        //                            SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
-        //                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
-        //                            Specialty = reader.GetString(reader.GetOrdinal("Specialty"))
-
-        //                        };
-
-        //                    }
-        //                    reader.Close();
-        //                    return View(instructor);
-        //                }
-        //            }
-        //        }
-
+       // GET: TrainingPrograms/Details/1
+        public ActionResult Details(int id)
+        {
+            var trainingProgram = GetTrainingProgramById(id);
+            var ProgramEmployees = GetTrainingProgramEmployees(id);
+            var viewModel = new TrainingProgramDetailViewModel()
+            {
+                Id = id,
+                Name = trainingProgram.Name,
+                StartDate = trainingProgram.StartDate,
+                EndDate = trainingProgram.EndDate,
+                MaxAttendees = trainingProgram.MaxAttendees,
+                Employees = ProgramEmployees
+            };
+            return View(viewModel);
+        }
         // GET: TrainingPrograms/Create
         public ActionResult Create()
         {
@@ -110,7 +88,7 @@ namespace BangazonWorkforce.Controllers
             return View();
         }
 
-        // POST: Students/Create
+        // POST: TrainingPrograms/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(TrainingProgram trainingProgram)
@@ -146,70 +124,59 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-        //        // GET: Instructors/Edit/5
-        //        public ActionResult Edit(int id)
-        //        {
-        //            var instructor = GetInstructorById(id);
-        //            var cohortOptions = GetCohortOptions();
-        //            var viewModel = new InstructorEditViewModel()
-        //            {
-        //                InstructorId = instructor.Id,
-        //                FirstName = instructor.FirstName,
-        //                LastName = instructor.LastName,
-        //                CohortId = instructor.CohortId,
-        //                SlackHandle = instructor.SlackHandle,
-        //                Specialty = instructor.Specialty,
-        //                CohortOptions = cohortOptions
-        //            };
-        //            return View(viewModel);
-        //        }
+        // GET: TrainingPrograms/Edit/5
+        public ActionResult Edit(int id)
+        {
 
-        //        // POST: Instructors/Edit/5
-        //        [HttpPost]
-        //        [ValidateAntiForgeryToken]
-        //        public ActionResult Edit(int id, Instructor instructor)
-        //        {
-        //            try
-        //            {
-        //                using (SqlConnection conn = Connection)
-        //                {
-        //                    conn.Open();
-        //                    using (SqlCommand cmd = conn.CreateCommand())
-        //                    {
-        //                        cmd.CommandText = @" UPDATE Instructor
-        //                                           SET FirstName = @FirstName, 
-        //                                           LastName = @LastName,
-        //                                           SlackHandle = @SlackHandle,
-        //                                           CohortId = @CohortId,
-        //                                           Specialty = @Specialty
-        //                                           WHERE Id = @id";
+            var trainingProgram = GetTrainingProgramById(id);
+            return View(trainingProgram);
+        }
 
-        //                        cmd.Parameters.Add(new SqlParameter("@FirstName", instructor.FirstName));
-        //                        cmd.Parameters.Add(new SqlParameter("@LastName", instructor.LastName));
-        //                        cmd.Parameters.Add(new SqlParameter("@SlackHandle", instructor.SlackHandle));
-        //                        cmd.Parameters.Add(new SqlParameter("@CohortId", instructor.CohortId));
-        //                        cmd.Parameters.Add(new SqlParameter("@Specialty", instructor.Specialty));
-        //                        cmd.Parameters.Add(new SqlParameter("@id", instructor.Id));
+        // POST: TrainingPrograms/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, TrainingProgram trainingProgram)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @" UPDATE TrainingProgram
+                                                   SET Name = @Name, 
+                                                   StartDate = @StartDate,
+                                                   EndDate = @EndDate,
+                                                   MaxAttendees = @MaxAttendees
+                                                   WHERE Id = @id
+                                                   ";
 
-        //                        var rowsaffected = cmd.ExecuteNonQuery();
+                        cmd.Parameters.Add(new SqlParameter("@Name", trainingProgram.Name));
+                        cmd.Parameters.Add(new SqlParameter("@StartDate", trainingProgram.StartDate));
+                        cmd.Parameters.Add(new SqlParameter("@EndDate", trainingProgram.EndDate));
+                        cmd.Parameters.Add(new SqlParameter("@MaxAttendees", trainingProgram.MaxAttendees));
+                        cmd.Parameters.Add(new SqlParameter("@id", trainingProgram.Id));
 
-        //                        if (rowsaffected < 1)
-        //                        {
-        //                            return NotFound();
+                        var rowsaffected = cmd.ExecuteNonQuery();
 
-        //                        }
-        //                    }
-        //                }
+                        if (rowsaffected < 1)
+                        {
+                            return NotFound();
 
-        //                return RedirectToAction(nameof(Index));
-        //            }
-        //            catch
-        //            {
-        //                return View();
-        //            }
-        //        }
+                        }
+                    }
+                }
 
-        //        // GET: Instructors/Delete/5
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        //        // GET: TrainingPrograms/Delete/5
         //        public ActionResult Delete(int id)
         //        {
         //            var instructor = GetInstructorById(id);
@@ -245,68 +212,77 @@ namespace BangazonWorkforce.Controllers
         //        }
 
 
-        //        private Instructor GetInstructorById(int id)
-        //        {
-        //            using (SqlConnection conn = Connection)
-        //            {
-        //                conn.Open();
-        //                using (SqlCommand cmd = conn.CreateCommand())
-        //                {
-        //                    cmd.CommandText = "SELECT Id, FirstName, LastName, CohortId, Specialty, SlackHandle FROM Instructor WHERE Id = @id";
+        private TrainingProgram GetTrainingProgramById(int id)
+        {
 
-        //                    cmd.Parameters.Add(new SqlParameter("@id", id));
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, Name, StartDate, EndDate, MaxAttendees FROM TrainingProgram WHERE Id = @id";
 
-        //                    var reader = cmd.ExecuteReader();
-        //                    Instructor instructor = null;
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
 
-        //                    if (reader.Read())
-        //                    {
-        //                        instructor = new Instructor()
-        //                        {
-        //                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-        //                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-        //                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-        //                            SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
-        //                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
-        //                            Specialty = reader.GetString(reader.GetOrdinal("Specialty"))
-        //                        };
+                    var reader = cmd.ExecuteReader();
+                    TrainingProgram trainingProgram = null;
 
-        //                    }
-        //                    reader.Close();
-        //                    return instructor;
-        //                }
-        //            }
-        //        }
+                    if (reader.Read())
+                    {
+                        trainingProgram = new TrainingProgram()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+                            EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+                            MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees"))
+                        };
+
+                    }
+                    reader.Close();
+                    return trainingProgram;
+                }
+            }
+            
+        }
 
 
-        //        private List<SelectListItem> GetCohortOptions()
-        //        {
-        //            using (SqlConnection conn = Connection)
-        //            {
-        //                conn.Open();
-        //                using (SqlCommand cmd = conn.CreateCommand())
-        //                {
-        //                    cmd.CommandText = "SELECT Id, Name FROM Cohort";
+        private List<Employee> GetTrainingProgramEmployees(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT e.Id, e.FirstName, e.LastName, et.TrainingProgramId, et.EmployeeId
+                                      FROM Employee e
+                                      LEFT JOIN EmployeeTraining et ON e.Id = et.EmployeeId 
+                                      WHERE et.TrainingProgramId = @id";
 
-        //                    var reader = cmd.ExecuteReader();
-        //                    var options = new List<SelectListItem>();
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
 
-        //                    while (reader.Read())
-        //                    {
-        //                        var option = new SelectListItem()
-        //                        {
-        //                            Text = reader.GetString(reader.GetOrdinal("Name")),
-        //                            Value = reader.GetInt32(reader.GetOrdinal("Id")).ToString()
-        //                        };
+                    var reader = cmd.ExecuteReader();
+                    var employees = new List<Employee>();
 
-        //                        options.Add(option);
+                    while (reader.Read())
+                    {
+                        var employee = new Employee()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName"))
 
-        //                    }
-        //                    reader.Close();
-        //                    return options;
-        //                }
-        //            }
-        //        }
+
+                        };
+
+                        employees.Add(employee);
+
+                    }
+                    reader.Close();
+                    return employees;
+                }
+            }
+        }
 
     }
 }

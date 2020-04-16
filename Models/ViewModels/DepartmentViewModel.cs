@@ -12,14 +12,15 @@ namespace BangazonWorkforce.Models.ViewModels
     {
         public int Id { get; set; }
 
+
         [Display(Name = "Name")]
         [Required(ErrorMessage = "Name is Required")]
         [MinLength(2, ErrorMessage = "Name should be at least 2 characters")]
         public string Name { get; set; }
+        
 
         [Display(Name = "Budget")]
         [Required(ErrorMessage = "Budget is Required")]
-        [MinLength(1, ErrorMessage = "Budget should be at least 1 character")]
         public int Budget { get; set; }
 
     }
