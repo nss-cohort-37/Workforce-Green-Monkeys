@@ -42,7 +42,7 @@ namespace BangazonWorkforce.Controllers
                     cmd.CommandText = @"
                     SELECT e.Id, FirstName, LastName, e.DepartmentId, d.[Name]
                     FROM Employee e
-                    LEFT JOIN Department d ON e.id = d.Id 
+                    LEFT JOIN Department d ON  e.DepartmentId = d.Id 
                     WHERE Name IS NOT NULL";
 
                     var reader = cmd.ExecuteReader();
