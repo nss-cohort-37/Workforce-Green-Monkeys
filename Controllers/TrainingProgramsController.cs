@@ -73,7 +73,7 @@ namespace BangazonWorkforce.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    // This SQL query is only getting training programs that start after today
+                    // This SQL query is only getting training programs that End before today
                     cmd.CommandText = @"SELECT Id, Name, StartDate, EndDate, MaxAttendees 
                                       FROM TrainingProgram
                                       WHERE EndDate < GETDATE()";
@@ -224,8 +224,10 @@ namespace BangazonWorkforce.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, TrainingProgram trainingProgram)
         {
+            DeleteEmployeeTraining(id);
             try
             {
+                
                 using (SqlConnection conn = Connection)
                 {
                     conn.Open();
@@ -246,7 +248,21 @@ namespace BangazonWorkforce.Controllers
                 return View();
             }
         }
+        // this is a method to delete employee - training relationships when deleting a program 
+        private void DeleteEmployeeTraining(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"  DELETE FROM EmployeeTraining WHERE TrainingProgramId = @TrainingProgramId";
+                    cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", id));
 
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                }
+            }
+        }
 
         private TrainingProgram GetTrainingProgramById(int id)
         {
