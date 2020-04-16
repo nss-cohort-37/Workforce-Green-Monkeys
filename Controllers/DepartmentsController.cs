@@ -168,41 +168,6 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-        // GET: Departments/Delete/1
-        public ActionResult Delete(int id)
-        {
-            var department = GetDepartmentById(id);
-            return View(department);
-        }
-
-
-        // POST: Departments/Delete/1
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Department department)
-        {
-            try
-            {
-                using (SqlConnection conn = Connection)
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = "DELETE FROM Department WHERE Id = @id";
-                        cmd.Parameters.Add(new SqlParameter("@id", id));
-
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                return View();
-            }
-        }
-
         private Department GetDepartmentById(int id)
         {
             using (SqlConnection conn = Connection)
@@ -210,22 +175,41 @@ namespace BangazonWorkforce.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT Id, Name, Budget FROM Department WHERE Id = @id";
+                    cmd.CommandText = @"SELECT d.Id, d.[Name], d.Budget, e.FirstName, e.LastName 
+                                      FROM Department d
+                                      LEFT JOIN Employee e ON d.Id = e.DepartmentId
+                                      WHERE d.Id = @id";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
                     var reader = cmd.ExecuteReader();
                     Department department = null;
 
-                    if (reader.Read())
+                    while (reader.Read())
                     {
-                        department = new Department()
+                        if (department == null)
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name")),
-                            Budget = reader.GetInt32(reader.GetOrdinal("Budget"))
-                        };
+                            department = new Department()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                                Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
+                                DepartmentEmployees = new List<Employee>()
 
+                            };
+                        }
+
+                        if(!reader.IsDBNull(reader.GetOrdinal("FirstName")))
+                        {
+                            department.DepartmentEmployees.Add(new Employee()
+
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName"))
+
+                            });
+                        }
                     }
                     reader.Close();
                     return department;
