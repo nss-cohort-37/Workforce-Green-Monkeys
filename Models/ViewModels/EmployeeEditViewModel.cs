@@ -9,6 +9,9 @@ namespace BangazonWorkforce.Models.ViewModels
 {
     public class EmployeeEditViewModel
     {
+        [Display(Name = "Id")]
+        public int Id { get; set; }
+
         [Display(Name = "Employee Id")]
         public int EmployeeId { get; set; }
 
@@ -31,9 +34,15 @@ namespace BangazonWorkforce.Models.ViewModels
         //[MinLength(3, ErrorMessage = "Department Name should have at least 3 characters Einstein!")]
         public string Name { get; set; }
 
-        [Display(Name = "Department Id")]
+        [Display(Name = "Model")]
+        //[Required(ErrorMessage = "Department Name is Required Dum! Dum!")]
+        //[MinLength(3, ErrorMessage = "Department Name should have at least 3 characters Einstein!")]
+        public string Model { get; set; }
+
+        [Display(Name = "Department")]
         public int DepartmentId { get; set; }
 
+        [Display(Name = "Assigned Computer")]
         public int ComputerId { get; set; }
 
         [Display(Name = "Email")]

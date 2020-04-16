@@ -211,10 +211,21 @@ namespace BangazonWorkforce.Controllers
             var ComputerOptions = GetComputerOptions();
             var viewModel = new EmployeeEditViewModel()
             {
+
+                Id = employee.Id,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
+                DepartmentId = employee.DepartmentId,
+                Email = employee.Email,
+                IsSupervisor = employee.IsSupervisor,
+                ComputerId = employee.ComputerId,
                 DepartmentOptions = DepartmentOptions,
                 ComputerOptions = ComputerOptions
+
+                //FirstName = employee.FirstName,
+                //LastName = employee.LastName,
+                //DepartmentOptions = DepartmentOptions,
+                //ComputerOptions = ComputerOptions
             };
             return View(viewModel);
 
@@ -226,6 +237,7 @@ namespace BangazonWorkforce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, EmployeeEditViewModel employee)
+              //public ActionResult Edit(int id, Employee employee)
         {
             try
             {
@@ -236,14 +248,18 @@ namespace BangazonWorkforce.Controllers
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = @"UPDATE Employee
-                                         SET LastName = @lastName,
-                                        ComputerId = @computerId,
-                                        DepartmentId = @departmentId
-                                        WHERE Id = @id";
+                                            SET FirstName = @firstName,
+                                            LastName = @lastName, 
+                                            DepartmentId = @departmentId,
+                                            ComputerId = @computerId
+                                            WHERE Id = @id";
 
                         cmd.Parameters.Add(new SqlParameter("@lastName", employee.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@firstName", employee.FirstName));
                         cmd.Parameters.Add(new SqlParameter("@departmentid", employee.DepartmentId));
+                        //cmd.Parameters.Add(new SqlParameter("@name", employee.Name));
                         cmd.Parameters.Add(new SqlParameter("@computerid", employee.ComputerId));
+                        //cmd.Parameters.Add(new SqlParameter("@model", employee.Model));
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 
                         var rowsAffected = cmd.ExecuteNonQuery();
@@ -254,7 +270,7 @@ namespace BangazonWorkforce.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
@@ -365,11 +381,11 @@ namespace BangazonWorkforce.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT e.Id, FirstName, e.LastName, c.Make, c.Model, tp.Name
-FROM Employee e
-LEFT JOIN Computer c ON c.Id = e.ComputerId
-LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.Id
-LEFT JOIN TrainingProgram tp ON et.TrainingProgramId = tp.Id
-WHERE e.Id =@id";
+                                        FROM Employee e
+                                        LEFT JOIN Computer c ON c.Id = e.ComputerId
+                                        LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.Id
+                                        LEFT JOIN TrainingProgram tp ON et.TrainingProgramId = tp.Id
+                                        WHERE e.Id =@id";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
