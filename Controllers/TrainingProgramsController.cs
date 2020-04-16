@@ -65,7 +65,43 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-       // GET: TrainingPrograms/Details/1
+        // GET: Training Programs - only past Dates
+        public ActionResult History()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    // This SQL query is only getting training programs that start after today
+                    cmd.CommandText = @"SELECT Id, Name, StartDate, EndDate, MaxAttendees 
+                                      FROM TrainingProgram
+                                      WHERE EndDate < GETDATE()";
+
+
+                    var reader = cmd.ExecuteReader();
+                    var trainingPrograms = new List<TrainingProgram>();
+
+                    while (reader.Read())
+                    {
+                        var trainingProgram = new TrainingProgram()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+                            EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+                            MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees")),
+
+                        };
+                        trainingPrograms.Add(trainingProgram);
+                    }
+                    reader.Close();
+                    return View(trainingPrograms);
+                }
+            }
+        }
+
+        // GET: TrainingPrograms/Details/1
         public ActionResult Details(int id)
         {
             var trainingProgram = GetTrainingProgramById(id);

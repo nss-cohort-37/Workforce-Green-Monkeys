@@ -57,7 +57,11 @@
         if it is, the user is given the option to edit the details*@
     @if (Model.StartDate > DateTime.Now)
     {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
+        <div>
+
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
+            |
+        </div>
     }
-    |<a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Back to List</a>
 </div>
