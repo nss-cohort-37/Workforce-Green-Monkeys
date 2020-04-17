@@ -15,13 +15,17 @@ namespace BangazonWorkforce.Models.ViewModels
         
         [Display(Name = "Purchase Date")]
         public DateTime PurchaseDate { get; set; }
+        [Display(Name = "Decomission Date")]
         public DateTime? DecomissionDate { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }
 
         [Display(Name = "Employee")]
-        [Required]
+        public int EmployeeId { get; set; }
         public int ComputerId { get; set; }
+
+        public Employee employee { get; set; }
+
         public List<SelectListItem> EmployeeOptions { get; set; }
 
     }

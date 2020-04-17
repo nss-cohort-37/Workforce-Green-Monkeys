@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BangazonWorkforce.Models.ViewModels
 
 {
-    public class ComputerCreateViewmodel
+    public class ComputerCreateViewModel
 
     {
         public int Id { get; set; }
@@ -21,9 +21,9 @@ namespace BangazonWorkforce.Models.ViewModels
 
         [Display(Name = "Employee")]
         [Required]
-        public int ComputerId { get; set; }
+        public int EmployeeId { get; set; }
         public List<SelectListItem> EmployeeOptions { get; set; }
-
+        public Employee employee { get; set; }
     }
 
 } 
