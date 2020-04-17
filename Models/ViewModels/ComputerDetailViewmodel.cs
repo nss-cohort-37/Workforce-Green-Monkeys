@@ -20,8 +20,9 @@ namespace BangazonWorkforce.Models.ViewModels
         public string Make { get; set; }
         public string Model { get; set; }
 
-        [Display(Name = "First Name")]
-        public int FirstName { get; set; }
+        [Display(Name = "Name")]
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public int EmployeeId { get; set; }
         public int ComputerId { get; set; }
         public Employee employee { get; set; }
