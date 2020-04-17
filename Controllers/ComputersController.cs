@@ -189,18 +189,15 @@ namespace BangazonWorkforce.Controllers
 
         }
 
-        // GET: Computers/Details/1
-        public ActionResult Details(int id)
 
+        // GET: Computers/Details/1
+
+        public ActionResult Details(int id)
         {
 
             var computer = GetComputerById(id);
-            var EmployeesComputers = GetEmployeeByComputer(id);
-            var viewModel = new ComputerDetailViewModel()
-            {
-                Id = id
-            };
-            return View(viewModel);
+
+            return View(computer);
 
         }
 
@@ -219,7 +216,7 @@ namespace BangazonWorkforce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public ActionResult Delete([FromRoute] int id, ComputerCreateViewModel computer)
+        public ActionResult Delete([FromRoute] int id, Computer computer)
 
         {
             try
@@ -379,7 +376,7 @@ namespace BangazonWorkforce.Controllers
         }
 
         //Get a computer by Id
-        private ComputerCreateViewModel GetComputerById(int id)
+        private ComputerDetailViewModel GetComputerById(int id)
         {
 
             using (SqlConnection conn = Connection)
@@ -398,13 +395,13 @@ namespace BangazonWorkforce.Controllers
 
                     var reader = cmd.ExecuteReader();
 
-                    ComputerCreateViewModel computer = null;
+                    ComputerDetailViewModel computer = null;
 
                     if (reader.Read())
 
                     {
 
-                        computer = new ComputerCreateViewModel()
+                        computer = new ComputerDetailViewModel()
 
                         {
 
