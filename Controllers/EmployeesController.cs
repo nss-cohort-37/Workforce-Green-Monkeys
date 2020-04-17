@@ -483,7 +483,13 @@ namespace BangazonWorkforce.Controllers
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = "SELECT Id, Name FROM TrainingProgram";
+                        cmd.CommandText = @"SELECT tp.Id, tp.[Name], tp.MaxAttendees, et.TrainingProgramId, COUNT(et.EmployeeId) 
+                                            FROM TrainingProgram tp
+                                            LEFT JOIN EmployeeTraining et 
+                                            ON tp.Id =  et.TrainingProgramId 
+                                            WHERE tp.StartDate > GETDATE()
+                                            AND tp.MaxAttendees > et.EmployeeId
+                                            GROUP BY tp.[Name], et.TrainingProgramId, tp.Id,  tp.MaxAttendees";
 
                         var reader = cmd.ExecuteReader();
                         var options = new List<SelectListItem>();

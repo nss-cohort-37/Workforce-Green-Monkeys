@@ -20,6 +20,7 @@ namespace BangazonWorkforce.Models.ViewModels
 
         [Display(Name = "Training Programs")]
         public int TrainingProgramId { get; set; }
+        public int EmployeeCount { get; set; }
 
 
 
