@@ -202,7 +202,7 @@ namespace BangazonWorkforce.Controllers
         }
 
         //this is getting the info to build the form to assign the employee to a training program
-        //GET: Employees/Create
+        //GET: Employees/Assign
         public ActionResult Assign(int id)
         {
             var employee = GetEmployeeById(id);
@@ -211,9 +211,48 @@ namespace BangazonWorkforce.Controllers
             {
                 ProgramOptions = programOptions,
                 Name = employee.FirstName + " " + employee.LastName,
+                EmployeeId = id,
+               
                 
             };
             return View(viewModel);
+        }
+
+        //POST: Employees/Assign
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //public ActionResult Create(EmployeeEditViewModel employee)
+        public ActionResult Assign(EmployeeTraining employeeTraining, EmployeeTrainingAssignViewModel employee)
+        {
+            try
+            //debug here
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO EmployeeTraining (TrainingProgramId, EmployeeId)
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@TrainingProgramId, @EmployeeId)";
+
+                        cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", employeeTraining.TrainingProgramId));
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", employee.Id));
+                        
+
+                        var id = (int)cmd.ExecuteScalar();
+                        //employeeTraining.EmployeeId = id;
+
+                        // this sends you back to index after created
+                        return RedirectToAction("Details", new { employee.Id });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // debug here
+                return View();
+            }
         }
 
         //return the FORM
