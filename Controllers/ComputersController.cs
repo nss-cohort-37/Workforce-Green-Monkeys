@@ -52,12 +52,14 @@ namespace BangazonWorkforce.Controllers
 
                 {
 
-                    cmd.CommandText = "SELECT Id, PurchaseDate, DecomissionDate, Make, Model FROM Computer WHERE 1 = 1";
+                    cmd.CommandText = "SELECT c.Id, c.PurchaseDate, c.DecomissionDate, c.Make, c.Model, e.FirstName, e.LastName, e.ComputerId FROM Computer c LEFT JOIN Employee e ON e.ComputerId = c.Id WHERE 1 = 1";
+
                     if (searchString != null)
                     {
                         cmd.CommandText += " AND Make LIKE @searchString OR Model Like @searchString";
                         cmd.Parameters.Add(new SqlParameter("@searchString", "%" + searchString + "%"));
                     }
+
                     var reader = cmd.ExecuteReader();
 
                     List<ComputerCreateViewModel> computers = new List<ComputerCreateViewModel>();
@@ -74,6 +76,25 @@ namespace BangazonWorkforce.Controllers
                             Model = reader.GetString(reader.GetOrdinal("Model"))
 
                         };
+
+                        
+                        if (!reader.IsDBNull(reader.GetOrdinal("FirstName")))
+
+                        {
+
+                            computer.employee = new Employee
+
+                            {
+
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+
+                                LastName = reader.GetString(reader.GetOrdinal("LastName"))
+
+
+
+                            };
+
+                        }
 
                         if(!reader.IsDBNull(reader.GetOrdinal("DecomissionDate")))
                             {
@@ -288,7 +309,7 @@ namespace BangazonWorkforce.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT Id, FirstName FROM Employee WHERE ComputerId = @id";
+                    cmd.CommandText = "SELECT Id, FirstName, LastName FROM Employee WHERE ComputerId = @id";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
@@ -301,6 +322,7 @@ namespace BangazonWorkforce.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName"))
                         };
 
                     }
@@ -324,14 +346,11 @@ namespace BangazonWorkforce.Controllers
                 {
 
                     cmd.CommandText = @"SELECT e.Id, e.FirstName, e.LastName
-
-                                      FROM Employee e";
+                                        FROM Employee e";
 
                     var reader = cmd.ExecuteReader();
 
                     var employees = new List<Employee>();
-
-
 
                     while (reader.Read())
 
