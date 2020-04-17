@@ -389,7 +389,7 @@ namespace BangazonWorkforce.Controllers
 
                 {
 
-                    cmd.CommandText = "SELECT c.Id, c.PurchaseDate, c.DecomissionDate, c.Make, c.Model, e.FirstName, e.LastName FROM Computer c LEFT JOIN Employee e ON e.ComputerId = c.Id WHERE c.Id = @id";
+                    cmd.CommandText = "SELECT c.Id, c.PurchaseDate, c.DecomissionDate, c.Make, c.Model, e.FirstName, e.LastName FROM Computer c LEFT JOIN Employee e ON e.ComputerId = c.Id WHERE c.Id = @id AND e.ComputerId IS NOT NULL";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
