@@ -201,8 +201,22 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        //this is getting the info to build the form to assign the employee to a training program
+        //GET: Employees/Create
+        public ActionResult Assign(int id)
+        {
+            var employee = GetEmployeeById(id);
+            var programOptions = GetProgramOptions();
+            var viewModel = new EmployeeTrainingAssignViewModel()
+            {
+                ProgramOptions = programOptions,
+                Name = employee.FirstName + " " + employee.LastName,
+                
+            };
+            return View(viewModel);
+        }
 
-         //return the FORM
+        //return the FORM
         // GET: Employees/Edit/5
         public ActionResult Edit(int id)
         {
@@ -230,6 +244,8 @@ namespace BangazonWorkforce.Controllers
             return View(viewModel);
 
         }
+
+
 
 
         //runs the POST
@@ -458,7 +474,35 @@ namespace BangazonWorkforce.Controllers
 
 
 
-
         }
+            private List<SelectListItem> GetProgramOptions()
+            {
+
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "SELECT Id, Name FROM TrainingProgram";
+
+                        var reader = cmd.ExecuteReader();
+                        var options = new List<SelectListItem>();
+
+                        while (reader.Read())
+                        {
+                            var option = new SelectListItem()
+                            {
+                                Text = reader.GetString(reader.GetOrdinal("Name")),
+                                Value = reader.GetInt32(reader.GetOrdinal("Id")).ToString(),
+                            };
+
+                            options.Add(option);
+
+                        }
+                        reader.Close();
+                        return options;
+                    }
+                }
+            }
     }
 }
