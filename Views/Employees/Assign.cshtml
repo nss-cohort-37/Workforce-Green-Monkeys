@@ -1,0 +1,41 @@
+﻿@model BangazonWorkforce.Models.ViewModels.EmployeeTrainingAssignViewModel
+
+@{
+    ViewData["Title"] = "Assign";
+}
+
+<h1>Assign</h1>
+
+<h4>Assign  @($"{Model.Name}") to Training Program</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Assign">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+
+                <label asp-for="TrainingProgramId" class="control-label"></label>
+
+                <select asp-for="TrainingProgramId" asp-items="@Model.ProgramOptions" class="form-control">
+
+                    <option>Please choose a program</option>
+
+                </select>
+
+                <span asp-validation-for="TrainingProgramId" class="text-danger"></span>
+
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Assign" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to Index</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

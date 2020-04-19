@@ -201,8 +201,61 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        //this is getting the info to build the form to assign the employee to a training program
+        //GET: Employees/Assign
+        public ActionResult Assign(int id)
+        {
+            var employee = GetEmployeeById(id);
+            var programOptions = GetProgramOptions();
+            var viewModel = new EmployeeTrainingAssignViewModel()
+            {
+                ProgramOptions = programOptions,
+                Name = employee.FirstName + " " + employee.LastName,
+                EmployeeId = id,
+               
+                
+            };
+            return View(viewModel);
+        }
 
-         //return the FORM
+        //POST: Employees/Assign
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //public ActionResult Create(EmployeeEditViewModel employee)
+        public ActionResult Assign(EmployeeTraining employeeTraining, EmployeeTrainingAssignViewModel employee)
+        {
+            try
+            //debug here
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO EmployeeTraining (TrainingProgramId, EmployeeId)
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@TrainingProgramId, @EmployeeId)";
+
+                        cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", employeeTraining.TrainingProgramId));
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", employee.Id));
+                        
+
+                        var id = (int)cmd.ExecuteScalar();
+                        //employeeTraining.EmployeeId = id;
+
+                        // this sends you back to index after created
+                        return RedirectToAction("Details", new { employee.Id });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // debug here
+                return View();
+            }
+        }
+
+        //return the FORM
         // GET: Employees/Edit/5
         public ActionResult Edit(int id)
         {
@@ -230,6 +283,8 @@ namespace BangazonWorkforce.Controllers
             return View(viewModel);
 
         }
+
+
 
 
         //runs the POST
@@ -458,7 +513,41 @@ namespace BangazonWorkforce.Controllers
 
 
 
-
         }
+            private List<SelectListItem> GetProgramOptions()
+            {
+
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"SELECT tp.Id, tp.[Name], tp.MaxAttendees, et.TrainingProgramId, COUNT(et.EmployeeId) 
+                                            FROM TrainingProgram tp
+                                            LEFT JOIN EmployeeTraining et 
+                                            ON tp.Id =  et.TrainingProgramId 
+                                            WHERE tp.StartDate > GETDATE()
+                                            AND tp.MaxAttendees > et.EmployeeId
+                                            GROUP BY tp.[Name], et.TrainingProgramId, tp.Id,  tp.MaxAttendees";
+
+                        var reader = cmd.ExecuteReader();
+                        var options = new List<SelectListItem>();
+
+                        while (reader.Read())
+                        {
+                            var option = new SelectListItem()
+                            {
+                                Text = reader.GetString(reader.GetOrdinal("Name")),
+                                Value = reader.GetInt32(reader.GetOrdinal("Id")).ToString(),
+                            };
+
+                            options.Add(option);
+
+                        }
+                        reader.Close();
+                        return options;
+                    }
+                }
+            }
     }
 }
