@@ -1,5 +1,5 @@
-﻿@model BangazonWorkforce.Models.Employee
-
+﻿
+@model BangazonWorkforce.Models.ViewModels.EmployeeDetailsViewModel
 @{
     ViewData["Title"] = "Details";
 }
@@ -10,12 +10,7 @@
     <h4>Employee</h4>
     <hr />
     <dl class="row">
-        @*<dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>*@
+     
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
         </dt>
@@ -28,52 +23,81 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LastName)
         </dd>
-        @*<dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>*@
-        @*<dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsSupervisor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsSupervisor)
-        </dd>*@
+
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DepartmentId)
+            Department
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DepartmentId)
+            @Html.DisplayFor(model => model.Department.Name)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ComputerId)
+            Computer
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ComputerId)
+            @Html.DisplayFor(model => model.Computer.Make)
+            @Html.DisplayFor(model => model.Computer.Model)
         </dd>
-        @*<dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TrainingProgram)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TrainingProgram)
-        </dd>*@
-        @*<dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ComputerId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ComputerId)
-        </dd>*@
-        @*<dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>*@
+       
     </dl>
 </div>
+@if (Model.TrainingPrograms.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <h5>Upcoming Training Programs</h5>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var program in Model.TrainingPrograms)
+            {
+                if (program.StartDate >= DateTime.Now)
+                {
+                    <tr>
+                        <td width="500px"> @Html.DisplayFor(model => program.Name)</td>
+                        <td width="500px"> @Html.DisplayFor(model => program.StartDate)</td>
+                    </tr>
+                }
+
+
+            }
+        </tbody>
+    </table>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <h5>Past Training Attended</h5>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var program in Model.TrainingPrograms)
+            {
+
+                if (program.StartDate <= DateTime.Now)
+                {
+                    <tr>
+                        <td width="500px"> @Html.DisplayFor(model => program.Name)</td>
+                        <td width="500px"> @Html.DisplayFor(model => program.StartDate)</td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+
+
+}
+else
+{
+    <h2>Assign yourself please to training programs!</h2>
+}
+
+
 <div>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Assign", "Assign", new { id = Model.Id }) |
     <a asp-action="Index">Back to List</a>
 </div>
+
+
