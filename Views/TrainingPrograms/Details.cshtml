@@ -7,7 +7,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>TrainingProgramDetailViewModel</h4>
+    <h4>@Model.Name</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -41,7 +41,7 @@
             @Html.DisplayFor(model => model.MaxAttendees)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Employees) 
+            @Html.DisplayNameFor(model => model.Employees) (@Html.DisplayFor(model => model.EmployeeCount))
         </dt>
     <dd class="col-sm-10">
         @foreach (Employee employee in Model.Employees)

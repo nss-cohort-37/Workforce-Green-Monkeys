@@ -19,5 +19,11 @@ namespace BangazonWorkforce.ViewModels
         public int MaxAttendees { get; set; }
         [Display(Name = "Employees Attending")]
         public List<Employee> Employees { get; set; }
+        public int EmployeeCount { get
+            {
+               return Employees.Count;
+            }
+        }
+
     }
 }
