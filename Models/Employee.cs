@@ -15,12 +15,13 @@ namespace BangazonWorkforce.Models
         public string LastName { get; set; }
 
         public string Email { get; set; }
-
         public bool IsSupervisor { get; set; }
+
         public int DepartmentId { get; set; }
         public Department Department { get; set; }
 
         public int ComputerId { get; set; }
+        public Computer? Computer { get; set; }
 
     }
 }
