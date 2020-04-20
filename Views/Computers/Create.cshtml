@@ -1,4 +1,4 @@
-﻿@model BangazonWorkforce.Models.ViewModels.ComputerCreateViewmodel
+﻿@model BangazonWorkforce.Models.ViewModels.ComputerCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -30,15 +30,15 @@
 
             <div class="form-group">
 
-                <label asp-for="ComputerId" class="control-label"></label>
+                <label asp-for="EmployeeId" class="control-label"></label>
 
-                <select asp-for="ComputerId" asp-items="@Model.EmployeeOptions" class="form-control">
+                <select asp-for="EmployeeId" asp-items="@Model.EmployeeOptions" class="form-control">
 
                     <option>Assign to employee</option>
 
                 </select>
 
-                <span asp-validation-for="ComputerId" class="text-danger"></span>
+                <span asp-validation-for="EmployeeId" class="text-danger"></span>
 
             </div>
 
