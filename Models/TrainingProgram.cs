@@ -17,5 +17,9 @@ namespace BangazonWorkforce.Models
         [Display(Name = "Max Attendees")]
         public int MaxAttendees { get; set; }
 
+        public static implicit operator TrainingProgram(List<TrainingProgram> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
